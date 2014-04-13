@@ -3,6 +3,7 @@ package com.xecko.util.dvds;
 import com.xecko.util.dvds.Entry;
 
 import java.io.File;
+import java.io.RandomAccessFile;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Files;
@@ -22,7 +23,14 @@ public class EntryTest {
 		tmp = Files.createTempDirectory("__EntryTest__");
 		Files.createDirectory(Paths.get(tmp + "/destination"));
 		Files.createDirectory(Paths.get(tmp + "/source"));
+		Files.createDirectory(Paths.get(tmp + "/source/emptydir"));
 		Files.createDirectory(Paths.get(tmp + "/source/dir1"));
+		RandomAccessFile fh = new RandomAccessFile(tmp + "/source/dir1/file1", "rw");
+		fh.setLength(1024);
+		fh.close();
+		fh = new RandomAccessFile(tmp + "/source/file2", "rw");
+		fh.setLength(1024 * 6);
+		fh.close();
 	}
 
     @Test(expectedExceptions = IOException.class)
@@ -31,9 +39,47 @@ public class EntryTest {
     }
     
     @Test
-    public void dirEntryTest() throws IOException {
+    public void dirEmptyTest() throws IOException {
+    	Entry entry = new Entry(new File(tmp + "/source/emptydir"));
+    	Assert.assertEquals(entry.size(), 0);
+    }
+    
+    @Test
+    public void dirTest() throws IOException {
     	Entry entry = new Entry(new File(tmp + "/source/dir1"));
-    	Assert.assertEquals(0, entry.getSize());
+    	Assert.assertEquals(entry.getPath(), tmp + "/source/dir1");
+    	Assert.assertEquals(entry.getParent(), tmp + "/source");
+    	Assert.assertEquals(entry.getName(), "dir1");
+    	Assert.assertEquals(entry.size(), 1024);
+    }
+    
+    @Test
+    public void fileTest() throws IOException {
+    	Entry entry = new Entry(new File(tmp + "/source/file2"));
+    	Assert.assertEquals(entry.getPath(), tmp + "/source/file2");
+    	Assert.assertEquals(entry.getParent(), tmp + "/source");
+    	Assert.assertEquals(entry.getName(), "file2");
+    	Assert.assertEquals(entry.size(), 1024 * 6);
+    }
+    
+    @Test
+    public void dirCopyTest() throws IOException {
+    	Entry srcEntry = new Entry(new File(tmp + "/source/dir1"));
+    	File destination = new File(tmp + "/destination");
+    	Assert.assertEquals(destination.exists(), true);
+    	srcEntry.copy(destination);
+    	Entry destEntry = new Entry(new File(tmp + "/destination/dir1"));
+    	Assert.assertEquals(destEntry.size(), 1024);
+    }
+    
+    @Test
+    public void fileCopyTest() throws IOException {
+    	Entry srcEntry = new Entry(new File(tmp + "/source/file2"));
+    	File destination = new File(tmp + "/destination");
+    	Assert.assertEquals(destination.exists(), true);
+    	srcEntry.copy(destination);
+    	Entry destEntry = new Entry(new File(tmp + "/destination/file2"));
+    	Assert.assertEquals(destEntry.size(), 1024 * 6);
     }
     
     @AfterClass
