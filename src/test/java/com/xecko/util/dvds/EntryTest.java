@@ -35,18 +35,18 @@ public class EntryTest {
 
     @Test(expectedExceptions = IOException.class)
     public void testNonexistence() throws IOException {
-    	new Entry(new File(tmp + "/i.do.not.exist"));
+    	new Entry(tmp + "/i.do.not.exist");
     }
     
     @Test
     public void dirEmptyTest() throws IOException {
-    	Entry entry = new Entry(new File(tmp + "/source/emptydir"));
+    	Entry entry = new Entry(tmp + "/source/emptydir");
     	Assert.assertEquals(entry.size(), 0);
     }
     
     @Test
     public void dirTest() throws IOException {
-    	Entry entry = new Entry(new File(tmp + "/source/dir1"));
+    	Entry entry = new Entry(tmp + "/source/dir1");
     	Assert.assertEquals(entry.getPath(), tmp + "/source/dir1");
     	Assert.assertEquals(entry.getParent(), tmp + "/source");
     	Assert.assertEquals(entry.getName(), "dir1");
@@ -55,7 +55,7 @@ public class EntryTest {
     
     @Test
     public void fileTest() throws IOException {
-    	Entry entry = new Entry(new File(tmp + "/source/file2"));
+    	Entry entry = new Entry(tmp + "/source/file2");
     	Assert.assertEquals(entry.getPath(), tmp + "/source/file2");
     	Assert.assertEquals(entry.getParent(), tmp + "/source");
     	Assert.assertEquals(entry.getName(), "file2");
@@ -64,21 +64,21 @@ public class EntryTest {
     
     @Test
     public void dirCopyTest() throws IOException {
-    	Entry srcEntry = new Entry(new File(tmp + "/source/dir1"));
+    	Entry srcEntry = new Entry(tmp + "/source/dir1");
     	File destination = new File(tmp + "/destination");
     	Assert.assertEquals(destination.exists(), true);
     	srcEntry.copy(destination);
-    	Entry destEntry = new Entry(new File(tmp + "/destination/dir1"));
+    	Entry destEntry = new Entry(tmp + "/destination/dir1");
     	Assert.assertEquals(destEntry.size(), 1024);
     }
     
     @Test
     public void fileCopyTest() throws IOException {
-    	Entry srcEntry = new Entry(new File(tmp + "/source/file2"));
+    	Entry srcEntry = new Entry(tmp + "/source/file2");
     	File destination = new File(tmp + "/destination");
     	Assert.assertEquals(destination.exists(), true);
     	srcEntry.copy(destination);
-    	Entry destEntry = new Entry(new File(tmp + "/destination/file2"));
+    	Entry destEntry = new Entry(tmp + "/destination/file2");
     	Assert.assertEquals(destEntry.size(), 1024 * 6);
     }
     

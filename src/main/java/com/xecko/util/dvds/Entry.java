@@ -9,31 +9,30 @@ import org.apache.commons.io.FileUtils;
  * @author steve
  * 
  */
-public class Entry {
+public class Entry extends File {
 
-	private File entry;
 	private long size;
 	private Boolean isDirectory;
 
 	/**
 	 * @param entry
 	 */
-	public Entry(File entry) throws IOException {
-		this.entry = entry;
+	public Entry(String entry) throws IOException {
+		super(entry);
 		size = 0;
-		if (!this.entry.exists())
+		if (!this.exists())
 			throw new IOException("File does not exist");
-		if (this.entry.isDirectory()) {
+		if (this.isDirectory()) {
 			isDirectory = true;
-			size = FileUtils.sizeOfDirectory(this.entry);
+			size = FileUtils.sizeOfDirectory(this);
 		} else {
 			isDirectory = false;
-			size = FileUtils.sizeOf(this.entry);
+			size = FileUtils.sizeOf(this);
 		}
 	}
 
 	public void dump() {
-		System.out.println((this.isDirectory ? "Directory: " : "File: ") + this.entry.toString() + " (" + this.size + ")");
+		System.out.println((isDirectory ? "Directory: " : "File: ") + this.toString() + " (" + size + ")");
 	}
 
 	/**
@@ -42,24 +41,12 @@ public class Entry {
 	public void copy(File destination) throws IOException {
 		destination.mkdirs();
 		if (isDirectory)
-			FileUtils.copyDirectoryToDirectory(entry, destination);
+			FileUtils.copyDirectoryToDirectory(this, destination);
 		else
-			FileUtils.copyFileToDirectory(entry, destination, true);
+			FileUtils.copyFileToDirectory(this, destination, true);
 	}
-
-	public String getParent() {
-		return entry.getParent();
-	}
-
-	public String getName() {
-		return entry.getName();
-	}
-
+	
 	public long size() {
 		return size;
-	}
-
-	public String getPath() {
-		return entry.getPath();
 	}
 }
