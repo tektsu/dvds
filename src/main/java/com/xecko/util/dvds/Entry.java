@@ -3,7 +3,7 @@ package com.xecko.util.dvds;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.*;
+import org.apache.commons.io.FileUtils;
 
 /**
  * @author steve
@@ -20,15 +20,15 @@ public class Entry {
 	 */
 	public Entry(File entry) throws IOException {
 		this.entry = entry;
-		this.size = 0;
+		size = 0;
 		if (!this.entry.exists())
 			throw new IOException("File does not exist");
 		if (this.entry.isDirectory()) {
-			this.isDirectory = true;
-			this.size = FileUtils.sizeOfDirectory(this.entry);
+			isDirectory = true;
+			size = FileUtils.sizeOfDirectory(this.entry);
 		} else {
-			this.isDirectory = false;
-			this.size = FileUtils.sizeOf(this.entry);
+			isDirectory = false;
+			size = FileUtils.sizeOf(this.entry);
 		}
 	}
 
@@ -39,33 +39,27 @@ public class Entry {
 	/**
 	 * @param destination
 	 */
-	public void copy(File destination) {
+	public void copy(File destination) throws IOException {
 		destination.mkdirs();
-		try {
-			FileUtils.copyDirectoryToDirectory(this.entry, destination);
-		} catch (IOException e) {
-			System.out.println("Problem copying [" + this.entry.toString() + "] to ["
-					+ destination + ": " + e.getMessage());
-		}
+		if (isDirectory)
+			FileUtils.copyDirectoryToDirectory(entry, destination);
+		else
+			FileUtils.copyFileToDirectory(entry, destination, true);
 	}
 
-	public String getPath() {
-		return this.entry.getParent();
+	public String getParent() {
+		return entry.getParent();
 	}
 
 	public String getName() {
-		return this.entry.getName();
+		return entry.getName();
 	}
 
-	public long getSize() {
-		return this.size;
+	public long size() {
+		return size;
 	}
 
-	public String getDirectory() {
-		return this.entry.getPath();
-	}
-
-	public Boolean exists() {
-		return this.entry.exists();
+	public String getPath() {
+		return entry.getPath();
 	}
 }
