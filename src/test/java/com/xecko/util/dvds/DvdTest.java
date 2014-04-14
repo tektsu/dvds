@@ -4,16 +4,13 @@ import com.xecko.util.dvds.Entry;
 import com.xecko.util.dvds.Dvd;
 
 import java.io.File;
-import java.io.RandomAccessFile;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.Files;
 
 import org.apache.commons.io.FileUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.AfterClass;
 
@@ -23,20 +20,10 @@ public class DvdTest {
 	
 	@BeforeClass
 	public void createTempFileSystem() throws IOException {
-		tmp = Files.createTempDirectory("__EntryTest__");
-		Files.createDirectory(Paths.get(tmp + "/destination"));
-		Files.createDirectory(Paths.get(tmp + "/source"));
-		Files.createDirectory(Paths.get(tmp + "/source/emptydir"));
-		Files.createDirectory(Paths.get(tmp + "/source/dir1"));
-		RandomAccessFile fh = new RandomAccessFile(tmp + "/source/dir1/file1", "rw");
-		fh.setLength(1024);
-		fh.close();
-		fh = new RandomAccessFile(tmp + "/source/file2", "rw");
-		fh.setLength(1024 * 6);
-		fh.close();
+		tmp = Helpers.setUpFileSystem();
 	}
 	
-	@BeforeTest
+	@BeforeMethod
 	public void createDvd() {
 		dvd = new Dvd("DVD");
 	}

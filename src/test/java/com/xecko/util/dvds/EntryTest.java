@@ -3,11 +3,8 @@ package com.xecko.util.dvds;
 import com.xecko.util.dvds.Entry;
 
 import java.io.File;
-import java.io.RandomAccessFile;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
 import org.testng.Assert;
@@ -19,18 +16,8 @@ public class EntryTest {
 	private Path tmp = null;
 	
 	@BeforeClass
-	public void createTempFileSystem() throws IOException {
-		tmp = Files.createTempDirectory("__EntryTest__");
-		Files.createDirectory(Paths.get(tmp + "/destination"));
-		Files.createDirectory(Paths.get(tmp + "/source"));
-		Files.createDirectory(Paths.get(tmp + "/source/emptydir"));
-		Files.createDirectory(Paths.get(tmp + "/source/dir1"));
-		RandomAccessFile fh = new RandomAccessFile(tmp + "/source/dir1/file1", "rw");
-		fh.setLength(1024);
-		fh.close();
-		fh = new RandomAccessFile(tmp + "/source/file2", "rw");
-		fh.setLength(1024 * 6);
-		fh.close();
+	public void setup() throws IOException {
+		tmp = Helpers.setUpFileSystem();
 	}
 
     @Test(expectedExceptions = IOException.class)
