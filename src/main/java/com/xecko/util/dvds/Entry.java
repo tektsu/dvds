@@ -17,6 +17,10 @@ public class Entry extends File {
 	/**
 	 * @param entry
 	 */
+	public Entry(File entry) throws IOException {
+		this(entry.getPath());
+	}
+	
 	public Entry(String entry) throws IOException {
 		super(entry);
 		size = 0;

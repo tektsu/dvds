@@ -50,6 +50,15 @@ public class EntryTest {
     }
     
     @Test
+    public void fileAsFileTest() throws IOException {
+    	Entry entry = new Entry(new File(tmp + "/source/file2"));
+    	Assert.assertEquals(entry.getPath(), tmp + "/source/file2");
+    	Assert.assertEquals(entry.getParent(), tmp + "/source");
+    	Assert.assertEquals(entry.getName(), "file2");
+    	Assert.assertEquals(entry.size(), 1024 * 6);
+    }
+    
+    @Test
     public void dirCopyTest() throws IOException {
     	Entry srcEntry = new Entry(tmp + "/source/dir1");
     	File destination = new File(tmp + "/destination");
