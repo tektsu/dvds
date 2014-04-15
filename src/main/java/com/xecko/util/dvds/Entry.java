@@ -20,7 +20,7 @@ public class Entry extends File {
 	public Entry(File entry) throws IOException {
 		this(entry.getPath());
 	}
-	
+
 	public Entry(String entry) throws IOException {
 		super(entry);
 		size = 0;
@@ -36,7 +36,8 @@ public class Entry extends File {
 	}
 
 	public void dump() {
-		System.out.println((isDirectory ? "Directory: " : "File: ") + this.toString() + " (" + size + ")");
+		System.out.println((isDirectory ? "Directory: " : "File: ")
+				+ this.toString() + " (" + size + ")");
 	}
 
 	/**
@@ -49,7 +50,7 @@ public class Entry extends File {
 		else
 			FileUtils.copyFileToDirectory(this, destination, true);
 	}
-	
+
 	public long size() {
 		return size;
 	}
