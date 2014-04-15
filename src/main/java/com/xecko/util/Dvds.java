@@ -3,15 +3,35 @@ package com.xecko.util;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import com.xecko.util.dvds.Dvd;
 import com.xecko.util.dvds.Entry;
+
+class SizeComparator implements Comparator<Entry> {
+	@Override
+	public int compare(Entry e1, Entry e2) {
+		long e1Size = e1.size();
+		long e2Size = e2.size();
+
+		if (e1Size > e2Size) {
+			return -1;
+		} else if (e1Size < e2Size) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+}
 
 public class Dvds {
 
@@ -77,16 +97,22 @@ public class Dvds {
 		}
 	}
 
-	public File[] getSourceContents() {
-		// TODO: We need the array sorted, largest files first
-		return source.listFiles();
+	public ArrayList<Entry> getSourceContents() throws IOException {
+		String[] list = source.list();
+		ArrayList<Entry> entries = new ArrayList<Entry>();
+		for (String file : list) {
+			if (file.equals(".DS_Store"))
+				continue;
+			entries.add(new Entry(source + "/" + file));
+		}
+		Collections.sort(entries, new SizeComparator());
+		return entries;
 	}
 
 	/**
 	 * @param entry
 	 */
-	public void add(File fileOrDirectory) throws IOException {
-		Entry entry = new Entry(fileOrDirectory);
+	public void add(Entry entry) throws IOException {
 
 		Dvd ourDvd = null;
 		for (Dvd dvd : dvds) {
@@ -110,7 +136,8 @@ public class Dvds {
 		return dvds.size();
 	}
 
-	public static void main(String[] args) throws FileNotFoundException, IOException {
+	public static void main(String[] args) throws FileNotFoundException,
+			IOException {
 
 		// Command line options
 		Options options = new Options();
@@ -151,8 +178,8 @@ public class Dvds {
 		dvds.SetSourceDirectory(cmd.getOptionValue("source"));
 
 		// For each Directory in the source, Find a chunk to put it in
-		File[] contents = dvds.getSourceContents();
-		for (File entry : contents) {
+		ArrayList<Entry> entries = dvds.getSourceContents();
+		for (Entry entry : entries) {
 			dvds.add(entry);
 		}
 
