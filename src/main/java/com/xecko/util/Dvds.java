@@ -17,22 +17,6 @@ import java.util.Comparator;
 import com.xecko.util.dvds.Dvd;
 import com.xecko.util.dvds.Entry;
 
-class SizeComparator implements Comparator<Entry> {
-	@Override
-	public int compare(Entry e1, Entry e2) {
-		long e1Size = e1.size();
-		long e2Size = e2.size();
-
-		if (e1Size > e2Size) {
-			return -1;
-		} else if (e1Size < e2Size) {
-			return 1;
-		} else {
-			return 0;
-		}
-	}
-}
-
 public class Dvds {
 
 	private ArrayList<Dvd> dvds;
@@ -97,18 +81,6 @@ public class Dvds {
 		}
 	}
 
-	public ArrayList<Entry> getSourceContents() throws IOException {
-		String[] list = source.list();
-		ArrayList<Entry> entries = new ArrayList<Entry>();
-		for (String file : list) {
-			if (file.equals(".DS_Store"))
-				continue;
-			entries.add(new Entry(source + "/" + file));
-		}
-		Collections.sort(entries, new SizeComparator());
-		return entries;
-	}
-
 	/**
 	 * @param entry
 	 */
@@ -134,6 +106,34 @@ public class Dvds {
 	 */
 	public int getDvdCount() {
 		return dvds.size();
+	}
+
+	class SizeComparator implements Comparator<Entry> {
+		@Override
+		public int compare(Entry e1, Entry e2) {
+			long e1Size = e1.size();
+			long e2Size = e2.size();
+
+			if (e1Size > e2Size) {
+				return -1;
+			} else if (e1Size < e2Size) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+	}
+
+	public ArrayList<Entry> getSourceContents() throws IOException {
+		String[] list = source.list();
+		ArrayList<Entry> entries = new ArrayList<Entry>();
+		for (String file : list) {
+			if (file.equals(".DS_Store"))
+				continue;
+			entries.add(new Entry(source + "/" + file));
+		}
+		Collections.sort(entries, new SizeComparator());
+		return entries;
 	}
 
 	public static void main(String[] args) throws FileNotFoundException,
@@ -184,7 +184,7 @@ public class Dvds {
 		}
 
 		// Copy the files to the new location
-		dvds.copy();
+		//dvds.copy();
 		dvds.dump();
 	}
 
