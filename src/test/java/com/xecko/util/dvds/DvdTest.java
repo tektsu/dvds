@@ -17,7 +17,7 @@ public class DvdTest {
 
     @BeforeClass
     public void createTempFileSystem() throws IOException {
-        tmp = Helpers.setUpFileSystem();
+        tmp = Helpers.setUpMinimalFileSystem();
     }
 
     @BeforeMethod

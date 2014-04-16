@@ -15,7 +15,7 @@ public class EntryTest {
 
     @BeforeClass
     public void setup() throws IOException {
-        tmp = Helpers.setUpFileSystem();
+        tmp = Helpers.setUpMinimalFileSystem();
     }
 
     @Test(expectedExceptions = IOException.class)
