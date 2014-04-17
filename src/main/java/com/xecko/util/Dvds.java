@@ -18,166 +18,180 @@ import com.xecko.util.dvds.Entry;
 
 public class Dvds {
 
-    private ArrayList<Dvd> dvds;
-    private File           source, destination;
-    private String         prefix;
-    private int            nextSequence;
+	private ArrayList<Dvd> dvds;
+	private File source, destination;
+	private String prefix;
+	private int nextSequence;
+	private long maxSize;
 
-    public Dvds(String destination) throws FileNotFoundException {
-        this(destination, 1, "DVD");
-    }
+	public Dvds(String destination) throws FileNotFoundException {
+		this(destination, 1, "DVD");
+	}
 
-    public Dvds(String destination, int startSequence) throws FileNotFoundException {
-        this(destination, startSequence, "DVD");
-    }
+	public Dvds(String destination, int startSequence)
+			throws FileNotFoundException {
+		this(destination, startSequence, "DVD");
+	}
 
-    public Dvds(String destination, int startSequence, String prefix) throws FileNotFoundException {
-        dvds = new ArrayList<Dvd>();
-        this.prefix = prefix;
-        nextSequence = startSequence;
+	public Dvds(String destination, int startSequence, String prefix)
+			throws FileNotFoundException {
+		dvds = new ArrayList<Dvd>();
+		this.prefix = prefix;
+		nextSequence = startSequence;
+		maxSize = Dvd.dvdSize;
 
-        // Open the destination directory
-        this.destination = new File(destination);
-        if (!this.destination.exists()) {
-            throw new FileNotFoundException("Destination Directory [" + destination + "] does not exist");
-        }
-        if (!this.destination.isDirectory()) {
-            throw new FileNotFoundException("Destination Directory [" + destination + "] is not a directory");
-        }
+		// Open the destination directory
+		this.destination = new File(destination);
+		if (!this.destination.exists()) {
+			throw new FileNotFoundException("Destination Directory ["
+					+ destination + "] does not exist");
+		}
+		if (!this.destination.isDirectory()) {
+			throw new FileNotFoundException("Destination Directory ["
+					+ destination + "] is not a directory");
+		}
 
-        String[] contents = this.destination.list();
-        if (contents.length > 0) {
-            throw new FileNotFoundException("Destination Directory [" + destination + "] is not empty");
-        }
-    }
+		String[] contents = this.destination.list();
+		if (contents.length > 0) {
+			throw new FileNotFoundException("Destination Directory ["
+					+ destination + "] is not empty");
+		}
+	}
 
-    public void dump() {
-        for (Dvd dvd : dvds) {
-            dvd.dump();
-        }
-    }
+	public void dump() {
+		for (Dvd dvd : dvds) {
+			dvd.dump();
+		}
+	}
 
-    public void copy() throws IOException {
-        for (Dvd dvd : dvds) {
-            dvd.copy(destination);
-        }
-    }
+	public void copy() throws IOException {
+		for (Dvd dvd : dvds) {
+			dvd.copy(destination);
+		}
+	}
 
-    public void SetSourceDirectory(String source) throws FileNotFoundException {
-        this.source = new File(source);
-        if (!this.source.exists()) {
-            throw new FileNotFoundException("Source Directory [" + source + "] does not exist");
-        }
-        if (!this.source.isDirectory()) {
-            throw new FileNotFoundException("Source Directory [" + source + "] is not a directory");
-        }
-    }
+	public void setMaxSize(long size) {
+		maxSize = size;
+	}
 
-    /**
-     * @param entry
-     */
-    public void add(Entry entry) throws IOException {
+	public void SetSourceDirectory(String source) throws FileNotFoundException {
+		this.source = new File(source);
+		if (!this.source.exists()) {
+			throw new FileNotFoundException("Source Directory [" + source
+					+ "] does not exist");
+		}
+		if (!this.source.isDirectory()) {
+			throw new FileNotFoundException("Source Directory [" + source
+					+ "] is not a directory");
+		}
+	}
 
-        Dvd ourDvd = null;
-        for (Dvd dvd : dvds) {
-            if (dvd.getMaxSize() - dvd.size() > entry.size()) {
-                ourDvd = dvd;
-                break;
-            }
-        }
-        if (ourDvd == null) {
-            ourDvd = new Dvd(String.format("%s%04d", prefix, nextSequence++));
-            dvds.add(ourDvd);
-        }
+	/**
+	 * @param entry
+	 */
+	public void add(Entry entry) throws IOException {
 
-        ourDvd.add(entry);
-    }
+		Dvd ourDvd = null;
+		for (Dvd dvd : dvds) {
+			if (dvd.getMaxSize() - dvd.size() > entry.size()) {
+				ourDvd = dvd;
+				break;
+			}
+		}
+		if (ourDvd == null) {
+			ourDvd = new Dvd(String.format("%s%04d", prefix, nextSequence++));
+			ourDvd.setMaxSize(maxSize);
+			dvds.add(ourDvd);
+		}
 
-    /**
-     * @return
-     */
-    public int getDvdCount() {
-        return dvds.size();
-    }
+		ourDvd.add(entry);
+	}
 
-    class SizeComparator implements Comparator<Entry> {
-        @Override
-        public int compare(Entry e1, Entry e2) {
-            long e1Size = e1.size();
-            long e2Size = e2.size();
+	/**
+	 * @return
+	 */
+	public int getDvdCount() {
+		return dvds.size();
+	}
 
-            if (e1Size > e2Size) {
-                return -1;
-            }
-            else if (e1Size < e2Size) {
-                return 1;
-            }
-            else {
-                return 0;
-            }
-        }
-    }
+	class SizeComparator implements Comparator<Entry> {
+		@Override
+		public int compare(Entry e1, Entry e2) {
+			long e1Size = e1.size();
+			long e2Size = e2.size();
 
-    public ArrayList<Entry> getSourceContents() throws IOException {
-        String[] list = source.list();
-        ArrayList<Entry> entries = new ArrayList<Entry>();
-        for (String file : list) {
-            if (file.equals(".DS_Store")) continue;
-            entries.add(new Entry(source + "/" + file));
-        }
-        Collections.sort(entries, new SizeComparator());
-        return entries;
-    }
+			if (e1Size > e2Size) {
+				return -1;
+			} else if (e1Size < e2Size) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+	}
 
-    public static void main(String[] args) throws FileNotFoundException, IOException {
+	public ArrayList<Entry> getSourceContents() throws IOException {
+		String[] list = source.list();
+		ArrayList<Entry> entries = new ArrayList<Entry>();
+		for (String file : list) {
+			if (file.equals(".DS_Store"))
+				continue;
+			entries.add(new Entry(source + "/" + file));
+		}
+		Collections.sort(entries, new SizeComparator());
+		return entries;
+	}
 
-        // Command line options
-        Options options = new Options();
-        options.addOption("source", true, "source directory");
-        options.addOption("destination", true, "destination directory");
-        options.addOption("name", true, "Directory Chunk Basename");
-        options.addOption("start", true, "Starting Counter Value");
+	public static void main(String[] args) throws FileNotFoundException,
+			IOException {
 
-        CommandLineParser parser = new PosixParser();
-        CommandLine cmd = null;
-        try {
-            cmd = parser.parse(options, args);
-        }
-        catch (ParseException e) {
-            System.out.println("Problem parsing command line: " + e.getMessage());
-            System.exit(1);
-        }
-        if (cmd.getOptionValue("source") == null) {
-            System.out.println("No source specified");
-            System.exit(1);
-        }
-        if (cmd.getOptionValue("destination") == null) {
-            System.out.println("No destination specified");
-            System.exit(1);
-        }
+		// Command line options
+		Options options = new Options();
+		options.addOption("source", true, "source directory");
+		options.addOption("destination", true, "destination directory");
+		options.addOption("name", true, "Directory Chunk Basename");
+		options.addOption("start", true, "Starting Counter Value");
 
-        // Examine the source and destination
-        String prefix = cmd.getOptionValue("name");
-        if (prefix == null) {
-            prefix = "DVD";
-        }
-        int start = 1;
-        if (cmd.getOptionValue("start") != null) {
-            start = Integer.parseInt(cmd.getOptionValue("start"));
-        }
+		CommandLineParser parser = new PosixParser();
+		CommandLine cmd = null;
+		try {
+			cmd = parser.parse(options, args);
+		} catch (ParseException e) {
+			System.out.println("Problem parsing command line: "
+					+ e.getMessage());
+			System.exit(1);
+		}
+		if (cmd.getOptionValue("source") == null) {
+			System.out.println("No source specified");
+			System.exit(1);
+		}
+		if (cmd.getOptionValue("destination") == null) {
+			System.out.println("No destination specified");
+			System.exit(1);
+		}
 
-        Dvds dvds = new Dvds(cmd.getOptionValue("destination"), start, prefix);
-        dvds.SetSourceDirectory(cmd.getOptionValue("source"));
+		// Examine the source and destination
+		String prefix = cmd.getOptionValue("name");
+		if (prefix == null) {
+			prefix = "DVD";
+		}
+		int start = 1;
+		if (cmd.getOptionValue("start") != null) {
+			start = Integer.parseInt(cmd.getOptionValue("start"));
+		}
 
-        // For each Directory in the source, Find a chunk to put it in
-        ArrayList<Entry> entries = dvds.getSourceContents();
-        for (Entry entry : entries) {
-            dvds.add(entry);
-        }
+		Dvds dvds = new Dvds(cmd.getOptionValue("destination"), start, prefix);
+		dvds.SetSourceDirectory(cmd.getOptionValue("source"));
 
-        // Copy the files to the new location
-        // dvds.copy();
-        dvds.dump();
-    }
+		// For each Directory in the source, Find a chunk to put it in
+		ArrayList<Entry> entries = dvds.getSourceContents();
+		for (Entry entry : entries) {
+			dvds.add(entry);
+		}
+
+		// Copy the files to the new location
+		// dvds.copy();
+		dvds.dump();
+	}
 
 }
