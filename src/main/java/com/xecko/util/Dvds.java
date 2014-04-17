@@ -15,6 +15,7 @@ import org.apache.commons.cli.PosixParser;
 
 import com.xecko.util.dvds.Dvd;
 import com.xecko.util.dvds.Entry;
+import com.xecko.util.dvds.Source;
 
 public class Dvds {
 
@@ -74,18 +75,6 @@ public class Dvds {
 		maxSize = size;
 	}
 
-	public void SetSourceDirectory(String source) throws FileNotFoundException {
-		this.source = new File(source);
-		if (!this.source.exists()) {
-			throw new FileNotFoundException("Source Directory [" + source
-					+ "] does not exist");
-		}
-		if (!this.source.isDirectory()) {
-			throw new FileNotFoundException("Source Directory [" + source
-					+ "] is not a directory");
-		}
-	}
-
 	/**
 	 * @param entry
 	 */
@@ -112,34 +101,6 @@ public class Dvds {
 	 */
 	public int getDvdCount() {
 		return dvds.size();
-	}
-
-	class SizeComparator implements Comparator<Entry> {
-		@Override
-		public int compare(Entry e1, Entry e2) {
-			long e1Size = e1.size();
-			long e2Size = e2.size();
-
-			if (e1Size > e2Size) {
-				return -1;
-			} else if (e1Size < e2Size) {
-				return 1;
-			} else {
-				return 0;
-			}
-		}
-	}
-
-	public ArrayList<Entry> getSourceContents() throws IOException {
-		String[] list = source.list();
-		ArrayList<Entry> entries = new ArrayList<Entry>();
-		for (String file : list) {
-			if (file.equals(".DS_Store"))
-				continue;
-			entries.add(new Entry(source + "/" + file));
-		}
-		Collections.sort(entries, new SizeComparator());
-		return entries;
 	}
 
 	public static void main(String[] args) throws FileNotFoundException,
@@ -181,10 +142,10 @@ public class Dvds {
 		}
 
 		Dvds dvds = new Dvds(cmd.getOptionValue("destination"), start, prefix);
-		dvds.SetSourceDirectory(cmd.getOptionValue("source"));
+		Source source = new Source(cmd.getOptionValue("source"));
 
 		// For each Directory in the source, Find a chunk to put it in
-		ArrayList<Entry> entries = dvds.getSourceContents();
+		ArrayList<Entry> entries = source.getContents();
 		for (Entry entry : entries) {
 			dvds.add(entry);
 		}
@@ -193,5 +154,4 @@ public class Dvds {
 		// dvds.copy();
 		dvds.dump();
 	}
-
 }

@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 
 import com.xecko.util.dvds.Entry;
+import com.xecko.util.dvds.Source;
 import com.xecko.util.dvds.Dvd;
 import com.xecko.util.dvds.Helpers;
 
@@ -45,24 +46,6 @@ public class DvdsTest {
 	}
 	
 	@Test
-	public void setSource() throws FileNotFoundException {
-		Dvds dvds = _createContainer();
-		dvds.SetSourceDirectory(tmp + "/source");
-	}
-
-	@Test(expectedExceptions = FileNotFoundException.class)
-	public void setNonexistentSource() throws FileNotFoundException {
-		Dvds dvds = _createContainer();
-		dvds.SetSourceDirectory(tmp + "/sourc");
-	}
-
-	@Test(expectedExceptions = FileNotFoundException.class)
-	public void setFileSource() throws FileNotFoundException {
-		Dvds dvds = _createContainer();
-		dvds.SetSourceDirectory(tmp + "/source/dir1/file1");
-	}
-	
-	@Test
 	public void populateDvds() throws IOException {
 		Dvds dvds = _populateDvds(Dvd.dvdSize);
         Assert.assertEquals(dvds.getDvdCount(), 1);
@@ -91,9 +74,9 @@ public class DvdsTest {
     
     private Dvds _populateDvds(long maxSize) throws FileNotFoundException, IOException {
 		Dvds dvds = _createContainer();
-		dvds.SetSourceDirectory(tmp + "/source");
+		Source source = new Source(tmp + "/source");
 		dvds.setMaxSize(maxSize);
-        ArrayList<Entry> entries = dvds.getSourceContents();
+        ArrayList<Entry> entries = source.getContents();
         for (Entry entry : entries) {
             dvds.add(entry);
         }
