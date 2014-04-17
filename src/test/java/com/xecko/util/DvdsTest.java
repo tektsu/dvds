@@ -80,7 +80,7 @@ public class DvdsTest {
         for (Entry entry : entries) {
             dvds.add(entry);
         }
-        dvds.dump();
+        //dvds.dump();
         return dvds;
     }
 }
