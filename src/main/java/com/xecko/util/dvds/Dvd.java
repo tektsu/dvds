@@ -9,12 +9,12 @@ import java.util.ArrayList;
  * 
  */
 public class Dvd {
-    ArrayList<Entry> entries; // The entries in this chunk
-    long             size;   // The space taken by these directories
-    long             maxSize; // The maximum space which may be used
-    String           name;   // The name of the chunk
-    
-    public static final long dvdSize = (long)(4.2 * 1024 * 1024 * 1024);
+    ArrayList<Entry>         entries;                                    // The entries in this chunk
+    long                     size;                                       // The space taken by these directories
+    long                     maxSize;                                    // The maximum space which may be used
+    String                   name;                                       // The name of the chunk
+
+    public static final long dvdSize = (long) (4.2 * 1024 * 1024 * 1024);
 
     public Dvd(String name) {
         this.name = name;

@@ -19,31 +19,31 @@ public class SourceTest {
         tmp = Helpers.setUpMinimalFileSystem();
     }
 
-	@Test
-	public void setSource() throws FileNotFoundException {
-		new Source(tmp + "/source");
-	}
+    @Test
+    public void setSource() throws FileNotFoundException {
+        new Source(tmp + "/source");
+    }
 
-	@Test(expectedExceptions = FileNotFoundException.class)
-	public void setNonexistentSource() throws FileNotFoundException {
-		new Source(tmp + "/sourc");
-	}
+    @Test(expectedExceptions = FileNotFoundException.class)
+    public void setNonexistentSource() throws FileNotFoundException {
+        new Source(tmp + "/sourc");
+    }
 
-	@Test(expectedExceptions = FileNotFoundException.class)
-	public void setFileSource() throws FileNotFoundException {
-		new Source(tmp + "/source/dir1/file1");
-	}
-	
-	@Test
-	public void checkContents() throws IOException {
-		Source source = new Source(tmp + "/source");
-		ArrayList<Entry> entries = source.getContents();
-		Assert.assertEquals(entries.size(), 3);
-		Assert.assertEquals(entries.get(0).getName(), "file2");
-		Assert.assertEquals(entries.get(1).getName(), "dir1");
-		Assert.assertEquals(entries.get(2).getName(), "emptydir");
-	}
-	
+    @Test(expectedExceptions = FileNotFoundException.class)
+    public void setFileSource() throws FileNotFoundException {
+        new Source(tmp + "/source/dir1/file1");
+    }
+
+    @Test
+    public void checkContents() throws IOException {
+        Source source = new Source(tmp + "/source");
+        ArrayList<Entry> entries = source.getContents();
+        Assert.assertEquals(entries.size(), 3);
+        Assert.assertEquals(entries.get(0).getName(), "file2");
+        Assert.assertEquals(entries.get(1).getName(), "dir1");
+        Assert.assertEquals(entries.get(2).getName(), "emptydir");
+    }
+
     @AfterClass
     public void removeTempFileSystem() throws IOException {
         FileUtils.deleteDirectory(tmp.toFile());

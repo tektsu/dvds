@@ -11,8 +11,12 @@ import org.apache.commons.io.FileUtils;
  */
 public class Entry extends File {
 
-    private long    size;
-    private Boolean isDirectory;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    private long              size;
+    private Boolean           isDirectory;
 
     /**
      * @param entry
