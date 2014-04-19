@@ -6,6 +6,9 @@ import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+
+import com.xecko.util.Dvds;
 
 public class Helpers {
 
@@ -38,4 +41,18 @@ public class Helpers {
         return tmp;
     }
 
+    public static Dvds _createContainer(Path tmp) throws FileNotFoundException {
+        return new Dvds(tmp + "/destination", 101, "test_dvd");
+    }
+
+    public static Dvds _populateDvds(Path tmp, long maxSize) throws FileNotFoundException, IOException {
+        Dvds dvds = _createContainer(tmp);
+        Source source = new Source(tmp + "/source");
+        dvds.setMaxSize(maxSize);
+        ArrayList<Entry> entries = source.getContents();
+        for (Entry entry : entries) {
+            dvds.add(entry);
+        }
+        return dvds;
+    }
 }

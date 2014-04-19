@@ -3,18 +3,13 @@ package com.xecko.util;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 
-import org.apache.commons.io.FileUtils;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.xecko.util.dvds.Dvd;
-import com.xecko.util.dvds.Entry;
 import com.xecko.util.dvds.Helpers;
-import com.xecko.util.dvds.Source;
 
 public class DvdsTest {
     private Path tmp = null;
@@ -26,7 +21,7 @@ public class DvdsTest {
 
     @Test
     public void createContainer() throws FileNotFoundException {
-        _createContainer();
+        Helpers._createContainer(tmp);
     }
 
     @Test(expectedExceptions = FileNotFoundException.class)
@@ -46,40 +41,19 @@ public class DvdsTest {
 
     @Test
     public void populateDvds() throws IOException {
-        Dvds dvds = _populateDvds(Dvd.dvdSize);
+        Dvds dvds = Helpers._populateDvds(tmp, Dvd.dvdSize);
         Assert.assertEquals(dvds.getDvdCount(), 1);
     }
 
     @Test
     public void populateDvds25K() throws IOException {
-        Dvds dvds = _populateDvds(25 * 1024);
+        Dvds dvds = Helpers._populateDvds(tmp, 25 * 1024);
         Assert.assertEquals(dvds.getDvdCount(), 9);
     }
 
     @Test
     public void populateDvds30K() throws IOException {
-        Dvds dvds = _populateDvds(30 * 1024);
+        Dvds dvds = Helpers._populateDvds(tmp, 30 * 1024);
         Assert.assertEquals(dvds.getDvdCount(), 8);
-    }
-
-    @AfterClass
-    public void removeTempFileSystem() throws IOException {
-        FileUtils.deleteDirectory(tmp.toFile());
-    }
-
-    private Dvds _createContainer() throws FileNotFoundException {
-        return new Dvds(tmp + "/destination", 101, "test_dvd");
-    }
-
-    private Dvds _populateDvds(long maxSize) throws FileNotFoundException, IOException {
-        Dvds dvds = _createContainer();
-        Source source = new Source(tmp + "/source");
-        dvds.setMaxSize(maxSize);
-        ArrayList<Entry> entries = source.getContents();
-        for (Entry entry : entries) {
-            dvds.add(entry);
-        }
-        // dvds.dump();
-        return dvds;
     }
 }
