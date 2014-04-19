@@ -143,7 +143,7 @@ public class Dvds {
         }
 
         // Copy the files to the new location
-        // dvds.copy();
+        dvds.copy();
         dvds.dump();
     }
 }
