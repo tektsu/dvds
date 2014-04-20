@@ -4,7 +4,7 @@
 	<groupId>com.xecko.util</groupId>
 	<artifactId>dvds</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>dvds</name>
 	<url>http://maven.apache.org</url>
 	<dependencies>
