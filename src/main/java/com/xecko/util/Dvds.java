@@ -15,6 +15,12 @@ import com.xecko.util.dvds.Dvd;
 import com.xecko.util.dvds.Entry;
 import com.xecko.util.dvds.Source;
 
+/**
+ * Take a source directory full of files and directories, and sort those files and directories into DVD-sized chunks in a
+ * destination directory.
+ * 
+ * @author steve
+ */
 public class Dvds {
 
     private ArrayList<Dvd> dvds;
@@ -23,14 +29,19 @@ public class Dvds {
     private int            nextSequence;
     private long           maxSize;
 
-    public Dvds(String destination) throws FileNotFoundException {
-        this(destination, 1, "DVD");
-    }
-
-    public Dvds(String destination, int startSequence) throws FileNotFoundException {
-        this(destination, startSequence, "DVD");
-    }
-
+    /**
+     * Create a DVDs container, which will manage a collection of Dvd objects. Each Dvd object will be given a name formed from
+     * the prefix and starting sequence passed to this constructor. The sequence number will be formated as a 4-digit' number
+     * with leading zeros.
+     * 
+     * @param destination
+     *            The destination directory, which must exist and be empty
+     * @param startSequence
+     *            An integer to start with in numbering the DVD chunks
+     * @param prefix
+     *            A prefix to use in constructing the name of each DVD chuck
+     * @throws FileNotFoundException
+     */
     public Dvds(String destination, int startSequence, String prefix) throws FileNotFoundException {
         dvds = new ArrayList<Dvd>();
         this.prefix = prefix;
@@ -52,24 +63,50 @@ public class Dvds {
         }
     }
 
+    public Dvds(String destination) throws FileNotFoundException {
+        this(destination, 1, "DVD");
+    }
+
+    public Dvds(String destination, int startSequence) throws FileNotFoundException {
+        this(destination, startSequence, "DVD");
+    }
+
+    /**
+     * List the contents of all the Dvd objects being managed. The output is sent to stdout.
+     */
     public void dump() {
         for (Dvd dvd : dvds) {
             dvd.dump();
         }
     }
 
+    /**
+     * Copy all of the source files and directories to their assigned DVD chunks in the destination directory.
+     * 
+     * @throws IOException
+     */
     public void copy() throws IOException {
         for (Dvd dvd : dvds) {
             dvd.copy(destination);
         }
     }
 
+    /**
+     * Set the number of bytes each DVD chunk can hold.
+     * 
+     * @param size
+     *            The size in bytes of each DVD
+     */
     public void setMaxSize(long size) {
         maxSize = size;
     }
 
     /**
+     * Add a file or directory to the DVD collection. The file or directory will be added to the first DVD in the collection
+     * with enough room to hold it.
+     * 
      * @param entry
+     *            An Entry object describing the file or directory
      */
     public void add(Entry entry) throws IOException {
 
@@ -90,7 +127,9 @@ public class Dvds {
     }
 
     /**
-     * @return
+     * Get the number of DVDs in the collection so far.
+     * 
+     * @return The number of DVDs
      */
     public int getDvdCount() {
         return dvds.size();
@@ -98,7 +137,6 @@ public class Dvds {
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
 
-        // Command line options
         Options options = new Options();
         options.addOption("source", true, "source directory");
         options.addOption("destination", true, "destination directory");
@@ -123,7 +161,6 @@ public class Dvds {
             System.exit(1);
         }
 
-        // Examine the source and destination
         String prefix = cmd.getOptionValue("name");
         if (prefix == null) {
             prefix = "DVD";
@@ -136,7 +173,6 @@ public class Dvds {
         Dvds dvds = new Dvds(cmd.getOptionValue("destination"), start, prefix);
         Source source = new Source(cmd.getOptionValue("source"));
 
-        // For each Directory in the source, Find a chunk to put it in
         ArrayList<Entry> entries = source.getContents();
         for (Entry entry : entries) {
             dvds.add(entry);
