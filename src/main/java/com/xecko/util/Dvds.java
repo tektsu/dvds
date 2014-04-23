@@ -112,6 +112,15 @@ public class Dvds {
   }
 
   /**
+   * Get the number of DVDs in the collection so far.
+   * 
+   * @return The number of DVDs
+   */
+  public int getDvdCount() {
+    return dvds.size();
+  }
+
+  /**
    * Add a file or directory to the DVD collection. The file or directory will
    * be added to the first DVD in the collection with enough room to hold it.
    * 
@@ -136,15 +145,6 @@ public class Dvds {
     }
 
     ourDvd.add(entry);
-  }
-
-  /**
-   * Get the number of DVDs in the collection so far.
-   * 
-   * @return The number of DVDs
-   */
-  public int getDvdCount() {
-    return dvds.size();
   }
 
   public static void main(String[] args) throws FileNotFoundException,
