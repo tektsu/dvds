@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
@@ -153,8 +154,11 @@ public class Dvds {
     Options options = new Options();
     options.addOption("source", true, "source directory");
     options.addOption("destination", true, "destination directory");
-    options.addOption("name", true, "Directory Chunk Basename");
-    options.addOption("start", true, "Starting Counter Value");
+    options.addOption("prefix", true, "Directory Basename");
+    options.addOption("sequence", true, "Starting Counter Value");
+    options.addOption("n", "no-action", false,
+        "Do not copy files to destination");
+    options.addOption("h", "help", false, "Print this message");
 
     CommandLineParser parser = new PosixParser();
     CommandLine cmd = null;
@@ -165,6 +169,11 @@ public class Dvds {
       System.out.println("Problem parsing command line: " + e.getMessage());
       System.exit(1);
     }
+    if (cmd.hasOption("help")) {
+      new HelpFormatter().printHelp("dvds", options);
+      System.exit(0);
+    }
+
     if (cmd.getOptionValue("source") == null) {
       System.out.println("No source specified");
       System.exit(1);
@@ -174,16 +183,16 @@ public class Dvds {
       System.exit(1);
     }
 
-    String prefix = cmd.getOptionValue("name");
+    String prefix = cmd.getOptionValue("prefix");
     if (prefix == null) {
       prefix = "DVD";
     }
-    int start = 1;
-    if (cmd.getOptionValue("start") != null) {
-      start = Integer.parseInt(cmd.getOptionValue("start"));
+    int sequence = 1;
+    if (cmd.getOptionValue("sequence") != null) {
+      sequence = Integer.parseInt(cmd.getOptionValue("sequence"));
     }
 
-    Dvds dvds = new Dvds(cmd.getOptionValue("destination"), start, prefix);
+    Dvds dvds = new Dvds(cmd.getOptionValue("destination"), sequence, prefix);
     Source source = new Source(cmd.getOptionValue("source"));
 
     ArrayList<Entry> entries = source.getContents();
@@ -191,7 +200,7 @@ public class Dvds {
       dvds.add(entry);
     }
 
-    dvds.copy();
+    if (!cmd.hasOption("no-action")) dvds.copy();
     System.out.println(dvds);
   }
 }
