@@ -148,8 +148,7 @@ public class Dvds {
     ourDvd.add(entry);
   }
 
-  public static void main(String[] args) throws FileNotFoundException,
-      IOException {
+  public static void main(String[] args) {
 
     Options options = new Options();
     options.addOption("source", true, "source directory");
@@ -192,15 +191,39 @@ public class Dvds {
       sequence = Integer.parseInt(cmd.getOptionValue("sequence"));
     }
 
-    Dvds dvds = new Dvds(cmd.getOptionValue("destination"), sequence, prefix);
-    Source source = new Source(cmd.getOptionValue("source"));
-
-    ArrayList<Entry> entries = source.getContents();
-    for (Entry entry : entries) {
-      dvds.add(entry);
+    Dvds dvds = null;
+    Source source = null;
+    try {
+      dvds = new Dvds(cmd.getOptionValue("destination"), sequence, prefix);
+      source = new Source(cmd.getOptionValue("source"));
+    }
+    catch (FileNotFoundException e) {
+      System.out.println(e.getMessage());
+      System.exit(1);
     }
 
-    if (!cmd.hasOption("no-action")) dvds.copy();
+    try {
+      ArrayList<Entry> entries = source.getContents();
+      for (Entry entry : entries) {
+        dvds.add(entry);
+      }
+    }
+    catch (IOException e) {
+      System.out.println("Problem adding files to collection: "
+          + e.getMessage());
+      System.exit(1);
+    }
+
+    if (!cmd.hasOption("no-action")) {
+      try {
+        dvds.copy();
+      }
+      catch (IOException e) {
+        System.out.println("Problem copying files to destination: "
+            + e.getMessage());
+        System.exit(1);
+      }
+    }
     System.out.println(dvds);
   }
 }
