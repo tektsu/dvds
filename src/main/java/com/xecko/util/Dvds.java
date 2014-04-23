@@ -24,10 +24,10 @@ import com.xecko.util.dvds.Source;
 public class Dvds {
 
   private ArrayList<Dvd> dvds;
-  private File           destination;
-  private String         prefix;
-  private int            nextSequence;
-  private long           maxSize;
+  private File destination;
+  private String prefix;
+  private int nextSequence;
+  private long maxSize;
 
   /**
    * Create a DVDs container, which will manage a collection of Dvd objects.
