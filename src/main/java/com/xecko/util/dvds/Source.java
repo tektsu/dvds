@@ -7,9 +7,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+/**
+ * Manage a source directory. The purpose of this class is to make it easy to
+ * get a list of all the file and directories sorted by size.
+ * 
+ * @author steve
+ */
 public class Source {
   File source = null;
 
+  /**
+   * Create a Source object
+   * 
+   * @param source
+   *          A path to a directory
+   * @throws FileNotFoundException
+   */
   public Source(String source) throws FileNotFoundException {
     this.source = new File(source);
     if (!this.source.exists()) {
@@ -22,6 +35,12 @@ public class Source {
     }
   }
 
+  /**
+   * Compare the size of two Entry objects representing files or directories in
+   * the source directory. Used to order the entries by size.
+   * 
+   * @author steve
+   */
   class SizeComparator implements Comparator<Entry> {
     @Override
     public int compare(Entry e1, Entry e2) {
@@ -40,6 +59,13 @@ public class Source {
     }
   }
 
+  /**
+   * Get a list of Entry objects representing the files and directories in the
+   * source directory.
+   * 
+   * @return An ArrayList of entries, sorted by size, largest first
+   * @throws IOException
+   */
   public ArrayList<Entry> getContents() throws IOException {
     String[] list = source.list();
     ArrayList<Entry> entries = new ArrayList<Entry>();

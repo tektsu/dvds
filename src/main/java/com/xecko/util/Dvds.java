@@ -78,13 +78,15 @@ public class Dvds {
   }
 
   /**
-   * List the contents of all the Dvd objects being managed. The output is sent
-   * to stdout.
+   * Represent the Dvds object as a string
    */
-  public void dump() {
+  @Override
+  public String toString() {
+    String result = "";
     for (Dvd dvd : dvds) {
-      dvd.dump();
+      result = dvd + "\n";
     }
+    return result;
   }
 
   /**
@@ -188,6 +190,6 @@ public class Dvds {
     }
 
     dvds.copy();
-    dvds.dump();
+    System.out.println(dvds);
   }
 }
