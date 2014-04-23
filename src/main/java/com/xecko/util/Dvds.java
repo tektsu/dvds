@@ -128,6 +128,8 @@ public class Dvds {
       }
     }
     if (ourDvd == null) {
+      if (entry.size() > maxSize)
+        throw new IOException("Entry too large for this collection");
       ourDvd = new Dvd(String.format("%s%04d", prefix, nextSequence++));
       ourDvd.setMaxSize(maxSize);
       dvds.add(ourDvd);
