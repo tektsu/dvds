@@ -37,10 +37,10 @@
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
 					<archive>
-            <manifest>
-              <mainClass>com.xecko.util.Dvds</mainClass>
-            </manifest>
-          </archive>
+						<manifest>
+							<mainClass>com.xecko.util.Dvds</mainClass>
+						</manifest>
+					</archive>
 				</configuration>
 				<executions>
 					<execution>
@@ -51,6 +51,19 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>appassembler-maven-plugin</artifactId>
+				<version>1.8</version>
+				<configuration>
+					<programs>
+						<program>
+							<mainClass>com.xecko.util.Dvds</mainClass>
+							<id>dvds</id>
+						</program>
+					</programs>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
