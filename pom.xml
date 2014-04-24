@@ -7,6 +7,9 @@
 	<version>1.0</version>
 	<name>dvds</name>
 	<url>http://maven.apache.org</url>
+	<properties>
+	    <mainClass>${project.groupId}.Dvds</mainClass>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.testng</groupId>
@@ -38,7 +41,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>com.xecko.util.Dvds</mainClass>
+							<mainClass>${mainClass}</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -59,8 +62,8 @@
 				<configuration>
 					<programs>
 						<program>
-							<mainClass>com.xecko.util.Dvds</mainClass>
-							<id>dvds</id>
+							<mainClass>${mainClass}</mainClass>
+							<id>${project.name}</id>
 						</program>
 					</programs>
 				</configuration>
