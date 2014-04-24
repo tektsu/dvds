@@ -44,13 +44,12 @@ public class Helpers {
     return tmp;
   }
 
-  public static Dvds _createContainer(Path tmp) throws FileNotFoundException {
-    return new Dvds(tmp + "/destination", 101, "test_dvd");
+  public static Dvds _createContainer() {
+    return new Dvds(101, "test_dvd");
   }
 
-  public static Dvds _populateDvds(Path tmp, long maxSize)
-      throws FileNotFoundException, IOException {
-    Dvds dvds = _createContainer(tmp);
+  public static Dvds _populateDvds(Path tmp, long maxSize) throws IOException {
+    Dvds dvds = _createContainer();
     Source source = new Source(tmp + "/source");
     dvds.setMaxSize(maxSize);
     ArrayList<Entry> entries = source.getContents();

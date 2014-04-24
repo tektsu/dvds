@@ -24,23 +24,7 @@ public class DvdsTest {
 
   @Test
   public void createContainer() throws FileNotFoundException {
-    Helpers._createContainer(tmp);
-  }
-
-  @Test(expectedExceptions = FileNotFoundException.class)
-  public void createContainerWithNoDestination() throws FileNotFoundException {
-    new Dvds(tmp + "/destinatio");
-  }
-
-  @Test(expectedExceptions = FileNotFoundException.class)
-  public void createContainerWithFileDestination() throws FileNotFoundException {
-    new Dvds(tmp + "/source/file2");
-  }
-
-  @Test(expectedExceptions = FileNotFoundException.class)
-  public void createContainerWithNonemptyDestination()
-      throws FileNotFoundException {
-    new Dvds(tmp + "/source");
+    Helpers._createContainer();
   }
 
   @Test
@@ -63,7 +47,7 @@ public class DvdsTest {
   
   @Test(expectedExceptions = IOException.class)
   public void entryTooLargeForCollection() throws IOException {
-    Dvds dvds = Helpers._createContainer(tmp);
+    Dvds dvds = Helpers._createContainer();
     Source source = new Source(tmp + "/source");
     dvds.setMaxSize(19 * 1024);
     ArrayList<Entry> entries = source.getContents();

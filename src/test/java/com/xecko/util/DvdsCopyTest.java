@@ -20,11 +20,23 @@ public class DvdsCopyTest {
     tmp = Helpers.setUpFullFileSystem();
   }
 
+  @Test(expectedExceptions = IOException.class)
+  public void copyToFileDestination() throws IOException {
+    Dvds dvds = Helpers._createContainer();
+    dvds.copy(tmp + "/source/file2");
+  }
+
+  @Test(expectedExceptions = IOException.class)
+  public void copyToNonemptyDestination() throws IOException {
+    Dvds dvds = Helpers._createContainer();
+    dvds.copy(tmp + "/source");
+  }
+
   @Test
   public void copy() throws IOException {
     Dvds dvds = Helpers._populateDvds(tmp, 40 * 1024);
     Assert.assertEquals(dvds.getDvdCount(), 6);
-    dvds.copy();
+    dvds.copy(tmp + "/destination");
     // Spot check to ensure resulting files are in the expected position
     new Entry(tmp + "/destination/test_dvd0101/dir20/file");
     new Entry(tmp + "/destination/test_dvd0102/dir18/file");

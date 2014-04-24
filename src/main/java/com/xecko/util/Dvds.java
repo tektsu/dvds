@@ -25,7 +25,6 @@ import com.xecko.util.dvds.Source;
 public class Dvds {
 
   private ArrayList<Dvd> dvds;
-  private File destination;
   private String prefix;
   private int nextSequence;
   private long maxSize;
@@ -36,46 +35,24 @@ public class Dvds {
    * sequence passed to this constructor. The sequence number will be formated
    * as a 4-digit' number with leading zeros.
    * 
-   * @param destination
-   *          The destination directory, which must exist and be empty
    * @param startSequence
    *          An integer to start with in numbering the DVD chunks
    * @param prefix
    *          A prefix to use in constructing the name of each DVD chuck
-   * @throws FileNotFoundException
    */
-  public Dvds(String destination, int startSequence, String prefix)
-      throws FileNotFoundException {
+  public Dvds(int startSequence, String prefix) {
     dvds = new ArrayList<Dvd>();
     this.prefix = prefix;
     nextSequence = startSequence;
     maxSize = Dvd.dvdSize;
-
-    // Open the destination directory
-    this.destination = new File(destination);
-    if (!this.destination.exists()) {
-      throw new FileNotFoundException("Destination Directory [" + destination
-          + "] does not exist");
-    }
-    if (!this.destination.isDirectory()) {
-      throw new FileNotFoundException("Destination Directory [" + destination
-          + "] is not a directory");
-    }
-
-    String[] contents = this.destination.list();
-    if (contents.length > 0) {
-      throw new FileNotFoundException("Destination Directory [" + destination
-          + "] is not empty");
-    }
   }
 
-  public Dvds(String destination) throws FileNotFoundException {
-    this(destination, 1, "DVD");
+  public Dvds(int startSequence) {
+    this(startSequence, "DVD");
   }
 
-  public Dvds(String destination, int startSequence)
-      throws FileNotFoundException {
-    this(destination, startSequence, "DVD");
+  public Dvds() {
+    this(1, "DVD");
   }
 
   /**
@@ -96,9 +73,25 @@ public class Dvds {
    * 
    * @throws IOException
    */
-  public void copy() throws IOException {
+  public void copy(String destination) throws IOException {
+    // Open the destination directory
+    File destDir = new File(destination);
+    if (!destDir.exists()) {
+      throw new FileNotFoundException("Destination Directory [" + destination
+          + "] does not exist");
+    }
+    if (!destDir.isDirectory()) {
+      throw new FileNotFoundException("Destination Directory [" + destination
+          + "] is not a directory");
+    }
+
+    String[] contents = destDir.list();
+    if (contents.length > 0) {
+      throw new FileNotFoundException("Destination Directory [" + destination
+          + "] is not empty");
+    }
     for (Dvd dvd : dvds) {
-      dvd.copy(destination);
+      dvd.copy(destDir);
     }
   }
 
@@ -194,7 +187,7 @@ public class Dvds {
     Dvds dvds = null;
     Source source = null;
     try {
-      dvds = new Dvds(cmd.getOptionValue("destination"), sequence, prefix);
+      dvds = new Dvds(sequence, prefix);
       source = new Source(cmd.getOptionValue("source"));
     }
     catch (FileNotFoundException e) {
@@ -216,7 +209,7 @@ public class Dvds {
 
     if (!cmd.hasOption("no-action")) {
       try {
-        dvds.copy();
+        dvds.copy(cmd.getOptionValue("destination"));
       }
       catch (IOException e) {
         System.out.println("Problem copying files to destination: "
